@@ -2,7 +2,7 @@
   "name": "chatbot",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://gabrielhrp31.github.io/chatbot-reactjs",
+  "homepage": "http://gabrielhrp31.github.io/chatbot-front/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
