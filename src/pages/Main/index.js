@@ -106,6 +106,7 @@ function Main() {
                                 placeholder="Nome e Sobrenome"
                                 value={values.name}
                                 invalid={touched.name && errors.name}
+                                touched={touched.name }
                                 onlyText={confirmed.name}
                                 onSend={()=>confirmName()}
                             />
@@ -120,6 +121,7 @@ function Main() {
                                 placeholder="Cidade" 
                                 value={values.city}
                                 invalid={touched.city &&  errors.city}
+                                touched={touched.city }
                                 onlyText={confirmed.city}
                                 onSend={()=>confirmCity()}
                             />
@@ -133,6 +135,7 @@ function Main() {
                                 placeholder="Data de Nascimento" 
                                 value={values.dateBirth}
                                 invalid={touched.dateBirth && errors.dateBirth}
+                                touched={touched.dateBirth }
                                 data={values.name}
                                 onlyText={confirmed.dateBirth}
                                 onSend={()=>confirmBirthDate()}
@@ -146,6 +149,7 @@ function Main() {
                                 placeholder="Email"
                                 value={values.email}
                                 invalid={touched.email && errors.email}
+                                touched={touched.email }
                                 onlyText={confirmed.email}
                                 onSend={()=>confirmEmail()}
                             />

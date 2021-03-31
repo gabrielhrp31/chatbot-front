@@ -54,4 +54,15 @@ export const Button = styled.button`
     :hover{
         background-color:rgba(0,0,0,0.1)
     }
+    
+    ${({invalid})=>invalid &&
+        css`
+            color:rgb(255,0,0,0.6);
+            cursor: unset;
+            
+            :hover{
+                background-color:transparent;
+            }
+        `
+    }
 `

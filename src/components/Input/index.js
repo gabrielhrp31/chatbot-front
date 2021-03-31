@@ -8,7 +8,7 @@ function Input({onSend=()=>false,onlyText=false, ...props}) {
       {!onlyText ?
         <>
             <StyledInput {...props} />
-            <Button type="button" onClick={()=>onSend()}><MdSend/></Button>
+            <Button type="button" invalid={props.invalid} disabled={!props.touched || props.invalid} onClick={()=>onSend()}><MdSend/></Button>
         </>
         :
         <>
