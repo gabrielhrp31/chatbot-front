@@ -1,3 +1,4 @@
+import { Field } from 'formik';
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
@@ -6,7 +7,7 @@ export const Container = styled.div`
   align-items:center;
 `;
 
-export const StyledInput = styled.input`
+export const StyledInput = styled(Field)`
     height:50px;
     width:200px;
     padding:5px;

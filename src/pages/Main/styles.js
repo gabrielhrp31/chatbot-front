@@ -1,3 +1,4 @@
+import { Form as FormikForm} from 'formik';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -10,4 +11,9 @@ export const Container = styled.div`
     max-width:1000px;
 
     background-color:var(--background-messages);
+`;
+
+export const Form = styled(FormikForm)`
+    display:flex;
+    flex-direction:column;
 `;

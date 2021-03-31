@@ -1,166 +1,170 @@
 import React, { useEffect, useState } from 'react';
 import Input from '../../components/Input';
 import Message from '../../components/MessageWrapper';
-import ReactStars from "react-rating-stars-component";
 
-import { Container } from './styles';
+import { Container, Form } from './styles';
 import Send from '../../components/Send';
+import UserSchema from '../../schemas/UserSchema';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {  Formik } from 'formik';
+import Rating from '../../components/Rating';
 
 function Main() {
 
-    const [user, setUser] = useState({
-        name:'',
-        dateBirth:'',
-        city:'',
-        email:'',
-        rating:0,
-    });
+    const [confirmed, setConfirmed] = useState(getDefaultConfirmed());
 
-    const [valid, setValid] = useState({
-        name:false,
-        dateBirth:false,
-        city:false,
-        email:false,
-    });
-
-    const [invalid, setInvalid] = useState({
-        name:false,
-        dateBirth:false,
-        city:false,
-        email:false,
-    });
-
-    useEffect(()=>{
-        window.scrollTo(0, window.innerHeight);
-    },[valid]);
-
-    function sendName(){
-        if(user.name.match(/^[a-z0-9]+$/i)!=null &&  user.name){
-            setValid({...valid,name:true});
-            setInvalid({...invalid,name:false});
-            window.scrollTo(0, window.innerHeight);
-        }else{
-            setValid({...valid,name:false});
-            setInvalid({...invalid,name:true});
-        }
-        window.scrollTo(0, window.innerHeight);
+    function getDefaultConfirmed(){
+        return {
+            name:false,
+            dateBirth:false,
+            city:false,
+            email:false,
+        };
     }
 
-    function sendBirthDate(){
-        if(user.dateBirth && new Date(user.dateBirth).toDateString() <= new Date().toDateString()){
-            setValid({...valid,dateBirth:true});
-            setInvalid({...invalid,dateBirth:false});
-            window.scrollTo(0, window.innerHeight);
-        }else{
-            setValid({...valid,dateBirth:false});
-            setInvalid({...invalid,dateBirth:true});
-        }
-    }
-
-    function sendCity(){
-        if(user.city){
-            setValid({...valid,city:true});
-            setInvalid({...invalid,city:false});
-            window.scrollTo(0, window.innerHeight);
-        }else{
-            setValid({...valid,city:false});
-            setInvalid({...invalid,city:true});
-        }
-    }
-
-    function validateEmail(email) {
-        const re =  /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}.[a-zA-Z]{2,3}$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    function sendEmail(){
-        if(validateEmail(user.email)){
-            setValid({...valid,email:true});
-            setInvalid({...invalid,email:false});
-        }else{
-            setValid({...valid,email:false});
-            setInvalid({...invalid,email:true});
-        }
-    }
-    
-    function submitData(){
-        axios.post('https://60638cb96bc4d60017fab448.mockapi.io/api/chat/user',{
-            ...user
+    async function submit(values, {setSubmitting, setErrors, setStatus, resetForm}){
+        await axios.post('https://60638cb96bc4d60017fab448.mockapi.io/api/chat/user',{
+            ...values
         },{})
         .then(({status})=>{
             if(status==201){
                 toast.success("Avaliação enviada!");
+                setConfirmed(getDefaultConfirmed());
+                resetForm({})
             }
         })
         .catch((e)=>{
             toast.error("Erro ao enviar avaliação!");
         })
+        return true;
     }
 
     return <Container>
-        <Message chatbot >Olá eu sou o ChatNilson tudo bem? Para começarmos, preciso saber seu nome.</Message>
-        <Message sended >
-            <Input 
-                placeholder="Nome e Sobrenome"
-                value={user.name}
-                invalid={invalid.name}
-                onlyText={valid.name}
-                onChange={(e)=>setUser({...user,name:e.target.value})}
-                onSend={()=>sendName()}
-            />
-        </Message>
+             <Formik
+                initialValues={{
+                    name:'',
+                    dateBirth:'',
+                    city:'',
+                    email:'',
+                    rating:0,
+                }}
+                validationSchema={UserSchema}
+                onSubmit={submit}
+            >       
+                {({ errors, values, touched,setFieldValue, isSubmitting}) => {
 
-        <Message chatbot  show={valid.name}>Que satisfação,{user.name}. Agora que sei o seu nome, qual cidade e estado voce mora?</Message>
 
-        <Message sended show={valid.name}>
-            <Input
-                type="text"
-                placeholder="Cidade" 
-                value={user.city}
-                invalid={invalid.city}
-                onlyText={valid.city}
-                onChange={(e)=>setUser({...user,city:e.target.value})}
-                onSend={()=>sendCity()}
-            />
-        </Message>
-        <Message chatbot  show={valid.city}>Legal, agora que sabemos sua cidade e seu estado. Quando foi que você nasceu?</Message>
-        
-        <Message sended show={valid.city}>
-            <Input 
-                type="date"
-                placeholder="Data de Nascimento" 
-                value={user.dateBirth}
-                invalid={invalid.dateBirth}
-                onlyText={valid.dateBirth}
-                onChange={(e)=>setUser({...user,dateBirth:e.target.value})}
-                onSend={()=>sendBirthDate()}
-            />
-        </Message>
-        <Message chatbot  show={valid.dateBirth}>Agora, me fala teu email por gentileza?</Message>
-        <Message sended show={valid.dateBirth}>
-            <Input 
-                type="text"
-                placeholder="Email"
-                value={user.email}
-                invalid={invalid.email}
-                onlyText={valid.email}
-                onChange={(e)=>setUser({...user,email:e.target.value})}
-                onSend={()=>sendEmail()}
-            />
-        </Message>
-        <Message chatbot  show={valid.email}>Você finalizou o teste Faça uma avaliação sobre o processo que realizou até o momento. Nós agradecemos!</Message>
-        <Message sended show={valid.email}>
-            <ReactStars
-                count={5}
-                onChange={(value)=>setUser({...user,rating:value})}
-                size={50}
-                activeColor="#ffd700"
-            />
-        </Message>
-        
-        <Send show={valid.email} onClick={submitData} >Enviar</Send>
+                    function confirmName(){
+                        if(!errors.name){
+                            setConfirmed({...confirmed,name:true})
+                            window.scrollTo(0,window.innerHeight);
+                        }else{
+                            setConfirmed({...confirmed,name:false})
+                            setConfirmed({...confirmed,dateBirth:false})
+                            setConfirmed({...confirmed,city:false})
+                            setConfirmed({...confirmed,email:false})
+                        }
+                    }
+
+                    function confirmBirthDate(){
+                        if(!errors.dateBirth){
+                            setConfirmed({...confirmed,dateBirth:true})
+                            window.scrollTo(0,window.innerHeight);
+                        }else{
+                            setConfirmed({...confirmed,dateBirth:false})
+                            setConfirmed({...confirmed,city:false})
+                            setConfirmed({...confirmed,email:false})
+                        }
+                    }
+
+                    function confirmCity(){
+                        if(!errors.city){
+                            setConfirmed({...confirmed,city:true})
+                            window.scrollTo(0,window.innerHeight);
+                        }else{
+                            setConfirmed({...confirmed,city:false})
+                            setConfirmed({...confirmed,email:false})
+                        }
+                    }
+
+                    function confirmEmail(){
+                        if(!errors.email){
+                            setConfirmed({...confirmed,email:true})
+                            window.scrollTo(0,window.innerHeight);
+                        }else{
+                            setConfirmed({...confirmed,email:false})
+                        }
+                    }
+
+                    return <Form>
+                        <Message chatbot >Olá eu sou o ChatNilson tudo bem? Para começarmos, preciso saber seu nome.</Message>
+                        <Message sended >
+                            <Input 
+                                type="text"
+                                name="name"
+                                placeholder="Nome e Sobrenome"
+                                value={values.name}
+                                invalid={touched.name && errors.name}
+                                onlyText={confirmed.name}
+                                onSend={()=>confirmName()}
+                            />
+                        </Message>
+
+                        <Message chatbot  show={confirmed.name}>Que satisfação,{values.name}. Agora que sei o seu nome, qual cidade e estado voce mora?</Message>
+
+                        <Message sended show={confirmed.name}>
+                            <Input
+                                type="text"
+                                name="city"
+                                placeholder="Cidade" 
+                                value={values.city}
+                                invalid={touched.city &&  errors.city}
+                                onlyText={confirmed.city}
+                                onSend={()=>confirmCity()}
+                            />
+                        </Message>
+                        <Message chatbot  show={confirmed.city}>Legal, agora que sabemos sua cidade e seu estado. Quando foi que você nasceu?</Message>
+                        
+                        <Message sended show={confirmed.city}>
+                            <Input 
+                                type="date"
+                                name="dateBirth"
+                                placeholder="Data de Nascimento" 
+                                value={values.dateBirth}
+                                invalid={touched.dateBirth && errors.dateBirth}
+                                data={values.name}
+                                onlyText={confirmed.dateBirth}
+                                onSend={()=>confirmBirthDate()}
+                            />
+                        </Message>
+                        <Message chatbot  show={confirmed.dateBirth}>Agora, me fala teu email por gentileza?</Message>
+                        <Message sended show={confirmed.dateBirth}>
+                            <Input 
+                                type="text"
+                                name="email"
+                                placeholder="Email"
+                                value={values.email}
+                                invalid={touched.email && errors.email}
+                                onlyText={confirmed.email}
+                                onSend={()=>confirmEmail()}
+                            />
+                        </Message>
+                        <Message chatbot  show={confirmed.email}>Você finalizou o teste Faça uma avaliação sobre o processo que realizou até o momento. Nós agradecemos!</Message>
+                        <Message sended show={confirmed.email}>
+                            <Rating
+                                name="rating"
+                                numberOfStars="5"
+                                currentRating="0"
+                                size={40}
+                                onClick={(value)=>setFieldValue('rating',value)}
+                                activeColor="#ffd700"
+                            />
+                        </Message>
+                        <Send type="submit"  loading={isSubmitting} disabled={isSubmitting} show={confirmed.email} />
+                    </Form>
+                }}
+        </Formik>
     </Container>;
 }
 
