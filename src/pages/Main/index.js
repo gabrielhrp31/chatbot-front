@@ -14,6 +14,10 @@ function Main() {
 
     const [confirmed, setConfirmed] = useState(getDefaultConfirmed());
 
+    useEffect(()=>{
+        window.scrollTo(0,window.innerHeight);
+    },[confirmed]);
+
     function getDefaultConfirmed(){
         return {
             name:false,
@@ -58,7 +62,6 @@ function Main() {
                     function confirmName(){
                         if(!errors.name){
                             setConfirmed({...confirmed,name:true})
-                            window.scrollTo(0,window.innerHeight);
                         }else{
                             setConfirmed({...confirmed,name:false})
                             setConfirmed({...confirmed,dateBirth:false})
@@ -70,7 +73,6 @@ function Main() {
                     function confirmBirthDate(){
                         if(!errors.dateBirth){
                             setConfirmed({...confirmed,dateBirth:true})
-                            window.scrollTo(0,window.innerHeight);
                         }else{
                             setConfirmed({...confirmed,dateBirth:false})
                             setConfirmed({...confirmed,city:false})
@@ -81,7 +83,6 @@ function Main() {
                     function confirmCity(){
                         if(!errors.city){
                             setConfirmed({...confirmed,city:true})
-                            window.scrollTo(0,window.innerHeight);
                         }else{
                             setConfirmed({...confirmed,city:false})
                             setConfirmed({...confirmed,email:false})
@@ -91,7 +92,6 @@ function Main() {
                     function confirmEmail(){
                         if(!errors.email){
                             setConfirmed({...confirmed,email:true})
-                            window.scrollTo(0,window.innerHeight);
                         }else{
                             setConfirmed({...confirmed,email:false})
                         }
