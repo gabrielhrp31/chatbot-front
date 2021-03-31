@@ -87,7 +87,7 @@ function Main() {
     
     function submitData(){
         axios.post('https://60638cb96bc4d60017fab448.mockapi.io/api/chat/user',{
-            'aa':'aa'
+            ...user
         },{})
         .then(({status})=>{
             if(status==201){
@@ -113,20 +113,8 @@ function Main() {
         </Message>
 
         <Message chatbot  show={valid.name}>Que satisfação,{user.name}. Agora que sei o seu nome, qual cidade e estado voce mora?</Message>
-        <Message sended show={valid.name}>
-            <Input 
-                type="date"
-                placeholder="Data de Nascimento" 
-                value={user.dateBirth}
-                invalid={invalid.dateBirth}
-                onlyText={valid.dateBirth}
-                onChange={(e)=>setUser({...user,dateBirth:e.target.value})}
-                onSend={()=>sendBirthDate()}
-            />
-        </Message>
 
-        <Message chatbot  show={valid.dateBirth}>Legal, agora que sabemos sua cidade e seu estado. Quando foi que você nasceu?</Message>
-        <Message sended show={valid.dateBirth}>
+        <Message sended show={valid.name}>
             <Input
                 type="text"
                 placeholder="Cidade" 
@@ -137,8 +125,21 @@ function Main() {
                 onSend={()=>sendCity()}
             />
         </Message>
-        <Message chatbot  show={valid.city}>Agora, me fala teu email por gentileza?</Message>
+        <Message chatbot  show={valid.city}>Legal, agora que sabemos sua cidade e seu estado. Quando foi que você nasceu?</Message>
+        
         <Message sended show={valid.city}>
+            <Input 
+                type="date"
+                placeholder="Data de Nascimento" 
+                value={user.dateBirth}
+                invalid={invalid.dateBirth}
+                onlyText={valid.dateBirth}
+                onChange={(e)=>setUser({...user,dateBirth:e.target.value})}
+                onSend={()=>sendBirthDate()}
+            />
+        </Message>
+        <Message chatbot  show={valid.dateBirth}>Agora, me fala teu email por gentileza?</Message>
+        <Message sended show={valid.dateBirth}>
             <Input 
                 type="text"
                 placeholder="Email"
